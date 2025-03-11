@@ -1,0 +1,12 @@
+Concept Decomposition of 000000308175.jpg: 
+	motorbike	0.093
+	police	0.0824
+	britain	0.0813
+	cops	0.0471
+	enforcement	0.027
+	officers	0.0174
+	lime	0.0111
+	passed	0.0068
+	policeman	0.0036
+Decomposition L0 Norm: 	9.0
+CLIP, SpLiCE Cosine Sim: 	0.5363

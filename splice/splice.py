@@ -51,7 +51,7 @@ def _download(url: str, root: str, subfolder: str):
     if os.path.isfile(download_target):
         return download_target
 
-    with urllib.request.urlopen(url) as source, open(download_target, "wb") as output:
+    with urllib.request.urlopen(url) as source, open(download_target, "wb", encoding="utf-8") as output:
         while True:
             buffer = source.read(8192)
             if not buffer:
@@ -98,7 +98,9 @@ def load(name: str, vocabulary: str, vocabulary_size: int = -1, device = "cuda" 
         concepts = []
         vocab = []
 
-        vocab_path = _download(os.path.join(GITHUB_HOST_LINK, "vocab", vocabulary + ".txt"), download_root or os.path.expanduser("~/.cache/splice/"), "vocab")
+        # vocab_path = _download(os.path.join(GITHUB_HOST_LINK, "vocab", vocabulary + ".txt"), download_root or os.path.expanduser("~/.cache/splice/"), "vocab")
+        link = f"{GITHUB_HOST_LINK}/vocab/{vocabulary}.txt"
+        vocab_path = _download(link, download_root or os.path.expanduser("~/.cache/splice/"), "vocab")
 
         concept_root = download_root or os.path.expanduser("~/.cache/splice/")
         os.makedirs(os.path.join(concept_root, "embeddings"), exist_ok=True)
@@ -112,7 +114,7 @@ def load(name: str, vocabulary: str, vocabulary_size: int = -1, device = "cuda" 
         if os.path.isfile(concept_path):
             concepts = torch.load(concept_path, map_location=torch.device(device))
         else:
-            with open(vocab_path, "r") as f:
+            with open(vocab_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
                 if vocabulary_size > 0:
                     lines = lines[-vocabulary_size:]
@@ -132,7 +134,9 @@ def load(name: str, vocabulary: str, vocabulary_size: int = -1, device = "cuda" 
     
     
     model_path = model_name.replace("/","-")
-    mean_path = _download(os.path.join(GITHUB_HOST_LINK, "means", f"{library}_{model_path}_image.pt"), download_root or os.path.expanduser("~/.cache/splice/"), "means")
+    # mean_path = _download(os.path.join(GITHUB_HOST_LINK, "means", f"{library}_{model_path}_image.pt"), download_root or os.path.expanduser("~/.cache/splice/"), "means")
+    link = f"{GITHUB_HOST_LINK}/means/{library}_{model_path}_image.pt"
+    mean_path = _download(link, download_root or os.path.expanduser("~/.cache/splice/"), "means")
     image_mean = torch.load(mean_path, map_location=torch.device(device))
 
     splice = SPLICE(
@@ -163,10 +167,12 @@ def get_vocabulary(name: str, vocabulary_size: int, download_root = None):
         _description_
     """
     if name in SUPPORTED_VOCAB:
-        vocab_path = _download(os.path.join(GITHUB_HOST_LINK, "vocab", name + ".txt"), download_root or os.path.expanduser("~/.cache/splice/"), "vocab")
+        # vocab_path = _download(os.path.join(GITHUB_HOST_LINK, "vocab", name + ".txt"), download_root or os.path.expanduser("~/.cache/splice/"), "vocab")
+        link = f"{GITHUB_HOST_LINK}/vocab/{name}.txt"
+        vocab_path = _download(link, download_root or os.path.expanduser("~/.cache/splice/"), "vocab")
 
         vocab = []
-        with open(vocab_path, "r") as f:
+        with open(vocab_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
             if vocabulary_size > 0:
                 lines = lines[-vocabulary_size:]
