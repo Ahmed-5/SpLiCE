@@ -138,7 +138,6 @@ def load(name: str, vocabulary: str, vocabulary_size: int = -1, device = "cuda" 
     link = f"{GITHUB_HOST_LINK}/means/{library}_{model_path}_image.pt"
     mean_path = _download(link, download_root or os.path.expanduser("~/.cache/splice/"), "means")
     image_mean = torch.load(mean_path, map_location=torch.device(device))
-
     splice = SPLICE(
         image_mean=image_mean,
         dictionary=concepts,
