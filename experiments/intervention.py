@@ -1,10 +1,10 @@
 import splice
-from datasets import CelebA, WaterbirdDataset
+from .datasets import CelebA, WaterbirdDataset
 import torch
 import time
 import argparse
 from torch.utils.data import DataLoader
-from zero_shot import find_closest
+from .zero_shot import find_closest
 from sklearn import linear_model
 import numpy as np
 

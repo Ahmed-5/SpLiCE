@@ -229,6 +229,12 @@ def load(dataset, preprocess, data_path, train=False):
         for i in range(1000):
             dataset_test.class_to_idx[classes[i]] = i
 
+    # elif dataset == "WaterBirds":
+    #     # check if data is available
+    #     if not os.path.exists(os.path.join(data_path, "waterbird_complete95_forest2water2")):
+    #         raise ValueError(f'{data_path} does not exist yet. Please generate the dataset first.')
+    #     dataset_test = WaterbirdDataset(data_path, transform=preprocess, train=train)
+
     else:
         raise RuntimeError(f"Dataset {dataset} not supported.")
 

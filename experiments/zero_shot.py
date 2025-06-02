@@ -53,6 +53,19 @@ def find_closest(embedding, label_embeddings):
     dot_product = embedding@label_embeddings.T
     return torch.argmax(dot_product, dim=-1)
 
+def generate_label_embeddings(dataset, splicemodel, tokenizer):
+    label_embeddings = []
+
+    print(dataset.class_to_idx.items())
+    idx_to_class = dict((v,k) for k,v in dataset.class_to_idx.items())    
+    for key in idx_to_class:
+        label_embeddings.append(splicemodel.encode_text(tokenizer("A photo of a {}".format(idx_to_class[key])).to(device)))
+    
+    label_embeddings = torch.stack(label_embeddings).squeeze()
+    label_embeddings /= torch.linalg.norm(label_embeddings, dim=-1).view(-1, 1)
+    
+    return label_embeddings
+
 # def compute_zero_shot(clipmodel, tokenizer, preprocess):
 #     dataset_test = CIFAR100("./datasets/", download=True, train=False, transform=preprocess)
 
@@ -93,14 +106,7 @@ def main():
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 
     ## Construct zero shot embeddings. Requires dataset to have 'class_to_idx' field.
-    label_embeddings = []
-
-    idx_to_class = dict((v,k) for k,v in dataset.class_to_idx.items())    
-    for key in idx_to_class:
-        label_embeddings.append(splicemodel.encode_text(tokenizer("A photo of a {}".format(idx_to_class[key])).to(device)))
-    
-    label_embeddings = torch.stack(label_embeddings).squeeze()
-    label_embeddings /= torch.linalg.norm(label_embeddings, dim=-1).view(-1, 1)
+    label_embeddings = generate_label_embeddings(dataset, splicemodel, tokenizer)
 
     zero_shot_acc = zero_shot_eval(splicemodel, dataloader, label_embeddings)
 
