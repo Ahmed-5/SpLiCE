@@ -51,7 +51,8 @@ def _download(url: str, root: str, subfolder: str):
     if os.path.isfile(download_target):
         return download_target
 
-    with urllib.request.urlopen(url) as source, open(download_target, "wb", encoding="utf-8") as output:
+    # with urllib.request.urlopen(url) as source, open(download_target, "wb", encoding="utf-8") as output:
+    with urllib.request.urlopen(url) as source, open(download_target, "wb") as output:
         while True:
             buffer = source.read(8192)
             if not buffer:

@@ -56,7 +56,7 @@ def find_closest(embedding, label_embeddings):
 def generate_label_embeddings(dataset, splicemodel, tokenizer):
     label_embeddings = []
 
-    print(dataset.class_to_idx.items())
+    # print(dataset.class_to_idx.items())
     idx_to_class = dict((v,k) for k,v in dataset.class_to_idx.items())    
     for key in idx_to_class:
         label_embeddings.append(splicemodel.encode_text(tokenizer("A photo of a {}".format(idx_to_class[key])).to(device)))

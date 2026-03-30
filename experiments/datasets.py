@@ -40,8 +40,14 @@ class MITStates(torch.utils.data.Dataset):
                     if idx not in test_idx:
                         continue
 
+                # if '"' in line.strip():
+                #     self.labels[split_idx] = line.strip().split('"')[0].split(",")[:-1] + [line.strip().split('"')[1]]
                 if '"' in line.strip():
-                    self.labels[split_idx] = line.strip().split('"')[0].split(",")[:-1] + [line.strip().split('"')[1]]
+                    parts = line.strip().split('"')
+                    before = parts[0].split(",")[:-1]
+                    quoted = [parts[1]]
+                    after  = parts[2].split(",")[1:]
+                    self.labels[split_idx] = before + quoted + after
                 else:
                     self.labels[split_idx] = line.strip().split(",")
 
@@ -65,7 +71,10 @@ class MITStates(torch.utils.data.Dataset):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        path = self.filepath + "/" + self.labels[idx][2]
+        try:
+            path = self.filepath + "/" + self.labels[idx][2]
+        except (IndexError, TypeError):
+            raise ValueError(f"Invalid index: {idx}", f"Labels: {self.labels[idx]}")
         image = Image.open(path)
         label = self.class_to_idx[self.labels[idx][0]]
         adj = self.adj_to_idx[self.labels[idx][1]]
@@ -200,8 +209,8 @@ class WaterbirdDataset(torch.utils.data.Dataset):
             "landbirdonwater": 2,
         }
 
-        print(len(self.y))
-        print(len(self.filenames))
+        # print(len(self.y))
+        # print(len(self.filenames))
 
     def __len__(self):
         return len(self.filenames)
@@ -253,12 +262,6 @@ def load(dataset, preprocess, data_path, train=False):
 
         for i in range(1000):
             dataset_test.class_to_idx[classes[i]] = i
-
-    # elif dataset == "WaterBirds":
-    #     # check if data is available
-    #     if not os.path.exists(os.path.join(data_path, "waterbird_complete95_forest2water2")):
-    #         raise ValueError(f'{data_path} does not exist yet. Please generate the dataset first.')
-    #     dataset_test = WaterbirdDataset(data_path, transform=preprocess, train=train)
 
     else:
         raise RuntimeError(f"Dataset {dataset} not supported.")
